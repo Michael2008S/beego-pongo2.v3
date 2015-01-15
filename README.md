@@ -1,4 +1,4 @@
-beego-pongo2.v2
+beego-pongo2.v3
 ============
 
 A tiny little helper for using Pongo2 (v3) with Beego.
