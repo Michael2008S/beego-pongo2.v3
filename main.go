@@ -39,7 +39,7 @@ var devMode bool
 // Templates are looked up in `templates/` instead of Beego's default `views/` so that
 // Beego doesn't attempt to load and parse our templates with `html/template`.
 func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
-	template, err := p2.FromCache(path.Join(templateDir, tmpl))
+	template, err := p2.FromFile(path.Join(templateDir, tmpl))
 
 	if err != nil {
 		panic(err)
@@ -82,7 +82,7 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 
 // Same as Render() but returns a string
 func RenderString(tmpl string, ctx Context) (string, error) {
-	template, err := p2.FromCache(path.Join(templateDir, tmpl))
+	template, err := p2.FromFile(path.Join(templateDir, tmpl))
 	if err != nil {
 		panic(err)
 	}
