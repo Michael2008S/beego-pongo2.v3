@@ -3,6 +3,8 @@ package base
 import (
 	"github.com/astaxie/beego"
 	renderer "github.com/danegigi/beego-pongo2.v3"
+
+	_ "github.com/flosch/pongo2-addons"
 )
 
 type BaseController struct {

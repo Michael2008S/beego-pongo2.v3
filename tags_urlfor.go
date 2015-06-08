@@ -5,6 +5,8 @@ import (
 
 	"github.com/astaxie/beego"
 	p2 "gopkg.in/flosch/pongo2.v3"
+
+	_ "github.com/flosch/pongo2-addons"
 )
 
 type tagURLForNode struct {

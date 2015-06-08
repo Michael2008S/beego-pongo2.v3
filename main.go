@@ -8,6 +8,7 @@
 package pongo2
 
 import (
+	"encoding/json"
 	"net/url"
 	"strings"
 	"sync"
@@ -17,6 +18,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	p2 "gopkg.in/flosch/pongo2.v3"
+
+	_ "github.com/flosch/pongo2-addons"
 )
 
 const (
@@ -37,6 +40,7 @@ var devMode bool
 // Beego doesn't attempt to load and parse our templates with `html/template`.
 func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	template, err := p2.FromCache(path.Join(templateDir, tmpl))
+
 	if err != nil {
 		panic(err)
 	}
@@ -58,6 +62,19 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 			ctx = Context{}
 		}
 		ctx["flash"] = readFlash(beegoCtx)
+	}
+
+	// FIXME 当是api的时候，直接返回页面参数
+	if strings.HasPrefix(beegoCtx.Input.Request.URL.Path, "/api/") {
+		var pCtx p2.Context
+		if ctx == nil {
+			pCtx = p2.Context{}
+		} else {
+			pCtx = p2.Context(ctx)
+		}
+		content, _ := json.MarshalIndent(pCtx, "", "  ")
+		_, err := beegoCtx.ResponseWriter.Write(content)
+		return err
 	}
 
 	return template.ExecuteWriter(pCtx, beegoCtx.ResponseWriter)
