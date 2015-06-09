@@ -71,7 +71,7 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	}
 
 	// FIXME 当是api的时候，直接返回页面参数
-	if strings.HasPrefix(beegoCtx.Input.Request.URL.Path, "/api/") {
+	if devMode && strings.HasPrefix(beegoCtx.Input.Request.URL.Path, "/api/") {
 		var pCtx p2.Context
 		if ctx == nil {
 			pCtx = p2.Context{}
