@@ -41,7 +41,9 @@ var devMode bool
 func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	var template *p2.Template
 	var err error
+	devMode = true
 	if devMode {
+		beego.Warn("p2.FromFile_devMode:", devMode)
 		template, err = p2.FromFile(path.Join(templateDir, tmpl))
 	} else {
 		template, err = p2.FromCache(path.Join(templateDir, tmpl))
