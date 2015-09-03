@@ -41,11 +41,12 @@ var devMode bool
 func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	var template *p2.Template
 	var err error
-	devMode = true
+	devMode = beego.RunMode == "dev"
 	if devMode {
-		beego.Warn("p2.FromFile_devMode:", devMode)
+		beego.Warn("p2.FromFile_Mode:", beego.RunMode)
 		template, err = p2.FromFile(path.Join(templateDir, tmpl))
 	} else {
+		beego.Info("p2.FromCache_Mode:", beego.RunMode)
 		template, err = p2.FromCache(path.Join(templateDir, tmpl))
 	}
 
@@ -90,7 +91,18 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 
 // Same as Render() but returns a string
 func RenderString(tmpl string, ctx Context) (string, error) {
-	template, err := p2.FromFile(path.Join(templateDir, tmpl))
+	var template *p2.Template
+	var err error
+	devMode = beego.RunMode == "dev"
+
+	if devMode {
+		beego.Warn("p2.FromFile_Mode:", beego.RunMode)
+		template, err = p2.FromFile(path.Join(templateDir, tmpl))
+	} else {
+		beego.Info("p2.FromCache_Mode:", beego.RunMode)
+		template, err = p2.FromCache(path.Join(templateDir, tmpl))
+	}
+
 	if err != nil {
 		panic(err)
 	}
@@ -130,6 +142,9 @@ func readFlash(ctx *context.Context) map[string]string {
 }
 
 func init() {
-	devMode = beego.AppConfig.String("runmode") == "dev"
+	// FIXME 不需要设置,直接用beego.RunMode 判断
+	//devMode = beego.AppConfig.String("runmode") == "dev"
+	//beego.Error("beego-pango2.v3_run_mode:", beego.RunMode)
+	//devMode = beego.RunMode == "dev"
 	beego.AutoRender = false
 }
