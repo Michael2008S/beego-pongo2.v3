@@ -22,9 +22,9 @@ import (
 	_ "github.com/flosch/pongo2-addons"
 )
 
-const (
-	templateDir = "templates"
-)
+//const (
+//	templateDir = "templates"
+//)
 
 type Context map[string]interface{}
 
@@ -32,6 +32,7 @@ var templates = map[string]*p2.Template{}
 var mutex = &sync.RWMutex{}
 
 var devMode bool
+var Pango2TemplatesPath string
 
 // Render takes a Beego context, template name and a Context (map[string]interface{}).
 // The template is parsed and cached, and gets executed into beegoCtx's ResponseWriter.
@@ -44,10 +45,11 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	devMode = beego.RunMode == "dev"
 	if devMode {
 		beego.Warn("p2.FromFile_Mode:", beego.RunMode)
-		template, err = p2.FromFile(path.Join(templateDir, tmpl))
+		beego.Warn(path.Join(Pango2TemplatesPath, tmpl))
+		template, err = p2.FromFile(path.Join(Pango2TemplatesPath, tmpl))
 	} else {
 		beego.Info("p2.FromCache_Mode:", beego.RunMode)
-		template, err = p2.FromCache(path.Join(templateDir, tmpl))
+		template, err = p2.FromCache(path.Join(Pango2TemplatesPath, tmpl))
 	}
 
 	if err != nil {
@@ -97,10 +99,10 @@ func RenderString(tmpl string, ctx Context) (string, error) {
 
 	if devMode {
 		beego.Warn("p2.FromFile_Mode:", beego.RunMode)
-		template, err = p2.FromFile(path.Join(templateDir, tmpl))
+		template, err = p2.FromFile(path.Join(Pango2TemplatesPath, tmpl))
 	} else {
 		beego.Info("p2.FromCache_Mode:", beego.RunMode)
-		template, err = p2.FromCache(path.Join(templateDir, tmpl))
+		template, err = p2.FromCache(path.Join(Pango2TemplatesPath, tmpl))
 	}
 
 	if err != nil {
@@ -144,7 +146,8 @@ func readFlash(ctx *context.Context) map[string]string {
 func init() {
 	// FIXME 不需要设置,直接用beego.RunMode 判断
 	//devMode = beego.AppConfig.String("runmode") == "dev"
-	//beego.Error("beego-pango2.v3_run_mode:", beego.RunMode)
+	beego.Error("beego-pango2.v3_run_mode:", beego.AppConfig.String("run_mode"))
+	beego.Error("Pango2TemplatesPath:", beego.AppConfig.String("Pango2TemplatesPath"))
 	//devMode = beego.RunMode == "dev"
 	beego.AutoRender = false
 }
