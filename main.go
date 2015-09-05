@@ -146,8 +146,8 @@ func readFlash(ctx *context.Context) map[string]string {
 func init() {
 	// FIXME 不需要设置,直接用beego.RunMode 判断
 	//devMode = beego.AppConfig.String("runmode") == "dev"
-	beego.Error("beego-pango2.v3_run_mode:", beego.AppConfig.String("run_mode"))
-	beego.Error("Pango2TemplatesPath:", beego.AppConfig.String("Pango2TemplatesPath"))
+	//beego.Error("beego-pango2.v3_run_mode:", beego.AppConfig.String("run_mode"))
+	//beego.Error("Pango2TemplatesPath:", beego.AppConfig.String("Pango2TemplatesPath"))
 	//devMode = beego.RunMode == "dev"
 	beego.AutoRender = false
 }
