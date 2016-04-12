@@ -42,13 +42,13 @@ var Pango2TemplatesPath string
 func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	var template *p2.Template
 	var err error
-	devMode = beego.RunMode == "dev"
+	devMode = beego.BConfig.RunMode == "dev"
 	if devMode {
-		beego.Warn("p2.FromFile_Mode:", beego.RunMode)
+		beego.Warn("p2.FromFile_Mode:", beego.BConfig.RunMode)
 		beego.Warn(path.Join(Pango2TemplatesPath, tmpl))
 		template, err = p2.FromFile(path.Join(Pango2TemplatesPath, tmpl))
 	} else {
-		beego.Info("p2.FromCache_Mode:", beego.RunMode)
+		beego.Info("p2.FromCache_Mode:", beego.BConfig.RunMode)
 		template, err = p2.FromCache(path.Join(Pango2TemplatesPath, tmpl))
 	}
 
@@ -63,7 +63,7 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 		pCtx = p2.Context(ctx)
 	}
 
-	if xsrf, ok := beegoCtx.GetSecureCookie(beego.XSRFKEY, "_xsrf"); ok {
+	if xsrf, ok := beegoCtx.GetSecureCookie(beego.BConfig.WebConfig.XSRFKey, "_xsrf"); ok {
 		pCtx["_xsrf"] = xsrf
 	}
 
@@ -76,7 +76,7 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 	}
 
 	// FIXME 当是api的时候，直接返回页面参数
-	if devMode && strings.HasPrefix(beegoCtx.Input.Request.URL.Path, "/api/") {
+	if devMode && strings.HasPrefix(beegoCtx.Input.Context.Request.URL.Path, "/api/") {
 		var pCtx p2.Context
 		if ctx == nil {
 			pCtx = p2.Context{}
@@ -95,13 +95,13 @@ func Render(beegoCtx *context.Context, tmpl string, ctx Context) error {
 func RenderString(tmpl string, ctx Context) (string, error) {
 	var template *p2.Template
 	var err error
-	devMode = beego.RunMode == "dev"
+	devMode = beego.BConfig.RunMode == "dev"
 
 	if devMode {
-		beego.Warn("p2.FromFile_Mode:", beego.RunMode)
+		beego.Warn("p2.FromFile_Mode:", beego.BConfig.RunMode)
 		template, err = p2.FromFile(path.Join(Pango2TemplatesPath, tmpl))
 	} else {
-		beego.Info("p2.FromCache_Mode:", beego.RunMode)
+		beego.Info("p2.FromCache_Mode:", beego.BConfig.RunMode)
 		template, err = p2.FromCache(path.Join(Pango2TemplatesPath, tmpl))
 	}
 
@@ -126,28 +126,28 @@ func RenderString(tmpl string, ctx Context) (string, error) {
 // (which only has a Data field anyway).
 func readFlash(ctx *context.Context) map[string]string {
 	data := map[string]string{}
-	if cookie, err := ctx.Request.Cookie(beego.FlashName); err == nil {
+	if cookie, err := ctx.Request.Cookie(beego.BConfig.WebConfig.FlashName); err == nil {
 		v, _ := url.QueryUnescape(cookie.Value)
 		vals := strings.Split(v, "\x00")
 		for _, v := range vals {
 			if len(v) > 0 {
-				kv := strings.Split(v, "\x23"+beego.FlashSeperator+"\x23")
+				kv := strings.Split(v, "\x23"+beego.BConfig.WebConfig.FlashSeparator+"\x23")
 				if len(kv) == 2 {
 					data[kv[0]] = kv[1]
 				}
 			}
 		}
 		// read one time then delete it
-		ctx.SetCookie(beego.FlashName, "", -1, "/")
+		ctx.SetCookie(beego.BConfig.WebConfig.FlashName, "", -1, "/")
 	}
 	return data
 }
 
 func init() {
-	// FIXME 不需要设置,直接用beego.RunMode 判断
+	// FIXME 不需要设置,直接用beego.BConfig.RunMode 判断
 	//devMode = beego.AppConfig.String("runmode") == "dev"
 	//beego.Error("beego-pango2.v3_run_mode:", beego.AppConfig.String("run_mode"))
 	//beego.Error("Pango2TemplatesPath:", beego.AppConfig.String("Pango2TemplatesPath"))
-	//devMode = beego.RunMode == "dev"
-	beego.AutoRender = false
+	//devMode = beego.BConfig.RunMode == "dev"
+	beego.BConfig.WebConfig.AutoRender = false
 }

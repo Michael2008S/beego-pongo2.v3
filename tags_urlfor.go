@@ -24,14 +24,14 @@ func (node *tagURLForNode) Execute(ctx *p2.ExecutionContext, buffer *bytes.Buffe
 	}
 
 	// fix : cannot use args[1:] (type []string) as type []interface {} in argument to beego.UrlFor
-	//url := beego.UrlFor(args[0], args[1:]...)
+	//url := beego.URLFor(args[0], args[1:]...)
 
 	length := len(args[1:])
 	argsInf := make([]interface{}, length)
 	for i, v := range args[1:] {
 		argsInf[i] = interface{}(v)
 	}
-	url := beego.UrlFor(args[0], argsInf...)
+	url := beego.URLFor(args[0], argsInf...)
 
 	buffer.WriteString(url)
 	return nil
